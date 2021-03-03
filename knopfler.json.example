@@ -1,0 +1,36 @@
+{
+  "unix-socket": false,
+  "bots": [
+    {
+      "name": "rocketbot1",
+      "type": "rocket",
+      "user": "rocketbot-username",
+      "password": "rocketbot-password",
+      "server": "https://rocketchat-server"
+    },
+    {
+      "name": "matrixbot1",
+      "type": "matrix",
+      "user_id": "@bot:matrix-server.org",
+      "token": "bot-token",
+      "server": "https://matrix-server"
+    }
+  ],
+  "links": [
+    {
+      "bot": "rocketbot1",
+      "url": "/low",
+      "channel": "monitoring-notices"
+    },
+    {
+      "bot": "rocketbot1",
+      "url": "/high",
+      "channel": "monitoring-alerts"
+    },
+    {
+      "bot": "matrixbot1",
+      "url": "/matrix-alerts",
+      "channel": "#alerts:matrix-server"
+    }
+  ]
+}

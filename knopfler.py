@@ -10,10 +10,10 @@ class MatrixBot:
         self.bot = MatrixClient(bot_config["server"], user_id=bot_config["user_id"], token=bot_config["token"])
 
     def get_link(self, channel):
+        room = self.bot.join_room(channel)
         async def link(request: Request):
-            print(request.method)
-            print(request.body)
-            room = self.bot.join_room(channel)
+            if request.method == "GET":
+                return response.text("this is just an endpoint for the alertmanager")
             room.send_html(f"{request.method} - {request.body}")
             return response.json({'status': 'ok'})
 
@@ -27,8 +27,8 @@ class RocketBot:
 
     def get_link(self, channel):
         async def link(request: Request):
-            print(request.method)
-            print(request.body)
+            if request.method == "GET":
+                return response.text("this is just an endpoint for the alertmanager")
             self.bot.send_message(f"{request.method} - {request.body}", channel)
             return response.json({'status': 'ok'})
 
@@ -36,9 +36,8 @@ class RocketBot:
 
 
 class Knopfler:
-    def __init__(self):
+    def __init__(self, config):
         self.app = Sanic(name="knopfler")
-        config = json.load(open('knopfler.json'))
         self.bots = {}
         for bot in config.get("bots"):
             if bot["type"] == "rocket":
@@ -56,11 +55,15 @@ class Knopfler:
         self.app.add_route(home, "/")
 
 
-if __name__ == '__main__':
-    # socket:
-    # import socket
-    #
-    # sock = socket.socket(socket.AF_UNIX)
-    # sock.bind('/tmp/api.sock')
-    # Knopfler().app.run(sock=sock)
-    Knopfler().app.run(host='0.0.0.0', port=9282)
+def main():
+    config = json.load(open('knopfler.json'))
+    knopfler = Knopfler(config)
+    if config.get("unix-socket"):
+        import os
+        import socket
+        with socket.socket(socket.AF_UNIX) as sock:
+            sock.bind('knopfler.socket')
+            knopfler.app.run(sock=sock)
+        os.remove("knopfler.socket")
+    else:
+        knopfler.app.run(host='0.0.0.0', port=9282)

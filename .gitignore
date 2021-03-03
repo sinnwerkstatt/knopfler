@@ -1,6 +1,4 @@
-/knopfler.hcl
+knopfler.json
 /.idea/
-
-
-/build/
 /dist/
+__pycache__/

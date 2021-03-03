@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "knopfler"
-version = "0.1.0"
+version = "0.1.4"
 description = ""
 authors = ["Andreas Nüßlein <andreas@nuessle.in>"]
 
@@ -16,6 +16,9 @@ matrix_client = { version = "*", optional = true }
 [tool.poetry.extras]
 matrix = ["matrix_client"]
 rocketchat = ["RocketChatAPIBot"]
+
+[tool.poetry.scripts]
+knopfler = 'knopfler:main'
 
 
 [build-system]
