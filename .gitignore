@@ -1,2 +1,6 @@
 /knopfler.hcl
 /.idea/
+
+
+/build/
+/dist/
