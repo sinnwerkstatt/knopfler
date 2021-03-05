@@ -6,17 +6,19 @@ from sanic import Sanic, response
 from sanic.request import Request
 
 
-def format_alert(msg):
+def format_alert(msg, html=False):
     try:
         alerts = json.loads(msg)["alerts"]
     except:
         return f"Error trying to parse JSON!!!\n\n{msg}"
     ret = []
     for alert in alerts:
+        labels = alert["labels"]
         ret += [
-            f"[{alert['status']}] {alert['instance']}: {alert['alertname']} {alert.get('name')}"
+            f"[{alert['status']}] {labels['instance']}: {labels['alertname']} {labels.get('name')}"
         ]
-
+    if html:
+        return "<br>".join(ret)
     return "\n".join(ret)
 
 
@@ -36,7 +38,7 @@ class MatrixBot:
         async def link(request: Request):
             if request.method == "GET":
                 return response.text("this is just an endpoint for the alertmanager")
-            room.send_html(format_alert(request.body))
+            room.send_html(format_alert(request.body, html=True))
             return response.json({"status": "ok"})
 
         return link
