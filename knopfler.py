@@ -15,7 +15,7 @@ def format_alert(msg, html=False):
     for alert in alerts:
         labels = alert["labels"]
         ret += [
-            f"[{alert['status']}] {labels['instance']}: {labels['alertname']} {labels.get('name')}"
+            f"[{alert['status']}] {labels['instance']}: {labels['alertname']} {labels.get('name','')}"
         ]
     if html:
         return "<br>".join(ret)
