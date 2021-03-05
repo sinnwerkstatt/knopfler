@@ -1,5 +1,6 @@
 {
   "unix-socket": false,
+  "healthcheck": "https://random-url",
   "bots": [
     {
       "name": "rocketbot1",
