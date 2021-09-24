@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "knopfler"
-version = "0.1.7"
+version = "0.1.9"
 description = ""
 authors = ["Andreas Nüßlein <andreas@nuessle.in>"]
 
@@ -8,8 +8,8 @@ authors = ["Andreas Nüßlein <andreas@nuessle.in>"]
 python = "^3.7"
 sanic = "*"
 
-RocketChatAPIBot = { version = "*", optional = true }
-matrix_client = { version = "*", optional = true }
+RocketChatAPIBot = { version = ">=0.1.4", optional = true }
+matrix_client = { version = ">=0.4", optional = true }
 
 [tool.poetry.dev-dependencies]
 
