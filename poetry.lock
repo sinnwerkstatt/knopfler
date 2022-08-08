@@ -111,7 +111,7 @@ rocketchat-API = "*"
 
 [[package]]
 name = "sanic"
-version = "22.6.0"
+version = "22.6.1"
 description = "A web server and web framework that's written to go fast. Build fast. Run fast."
 category = "main"
 optional = false
@@ -127,7 +127,7 @@ uvloop = {version = ">=0.5.3", markers = "sys_platform != \"win32\" and implemen
 websockets = ">=10.0"
 
 [package.extras]
-all = ["pytest-sugar", "sanic-testing (>=22.3.0)", "towncrier", "pytest-benchmark", "slotscheck (>=0.8.0,<1)", "pytest-cov", "pygments", "bandit", "isort (>=5.0.0)", "enum-tools", "mypy (>=0.901,<0.910)", "docutils", "black", "mistune (<2.0.0)", "pytest-sanic", "gunicorn (==20.0.4)", "cryptography", "chardet (>=3.0.0,<4.0.0)", "sphinx (>=2.1.2)", "sphinx-rtd-theme (>=0.4.3)", "beautifulsoup4", "uvicorn (<0.15.0)", "m2r2", "pytest (==6.2.5)", "tox", "coverage (==5.3)", "flake8", "types-ujson"]
+all = ["isort (>=5.0.0)", "pytest-sugar", "pytest-benchmark", "docutils", "towncrier", "cryptography", "mistune (<2.0.0)", "slotscheck (>=0.8.0,<1)", "flake8", "chardet (>=3.0.0,<4.0.0)", "m2r2", "bandit", "beautifulsoup4", "sanic-testing (>=22.3.0)", "mypy (>=0.901,<0.910)", "sphinx (>=2.1.2)", "tox", "uvicorn (<0.15.0)", "pygments", "black", "coverage (==5.3)", "pytest (==6.2.5)", "pytest-sanic", "pytest-cov", "enum-tools", "gunicorn (==20.0.4)", "sphinx-rtd-theme (>=0.4.3)", "types-ujson"]
 dev = ["sanic-testing (>=22.3.0)", "pytest (==6.2.5)", "coverage (==5.3)", "gunicorn (==20.0.4)", "pytest-cov", "beautifulsoup4", "pytest-sanic", "pytest-sugar", "pytest-benchmark", "chardet (>=3.0.0,<4.0.0)", "flake8", "black", "isort (>=5.0.0)", "bandit", "mypy (>=0.901,<0.910)", "docutils", "pygments", "uvicorn (<0.15.0)", "slotscheck (>=0.8.0,<1)", "cryptography", "tox", "towncrier", "types-ujson"]
 docs = ["sphinx (>=2.1.2)", "sphinx-rtd-theme (>=0.4.3)", "docutils", "pygments", "m2r2", "enum-tools", "mistune (<2.0.0)"]
 ext = ["sanic-ext"]
@@ -152,7 +152,7 @@ python-versions = ">=3.7"
 
 [[package]]
 name = "urllib3"
-version = "1.26.10"
+version = "1.26.11"
 description = "HTTP library with thread-safe connection pooling, file post, and more."
 category = "main"
 optional = true
