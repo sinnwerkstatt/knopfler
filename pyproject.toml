@@ -5,7 +5,7 @@ description = ""
 authors = ["Andreas Nüßlein <andreas@nuessle.in>"]
 
 [tool.poetry.dependencies]
-python = "^3.7"
+python = "^3.8"
 sanic = "*"
 
 RocketChatAPIBot = { version = ">=0.1.4", optional = true }
