@@ -2,8 +2,10 @@ import asyncio
 import json
 from urllib.request import urlopen
 
-from sanic import Sanic, response
-from sanic.request import Request
+import uvicorn
+from starlette.applications import Starlette
+from starlette.requests import Request
+from starlette.responses import JSONResponse, Response
 
 
 def format_alert(msg, html=False):
@@ -38,9 +40,9 @@ class MatrixBot:
 
         async def link(request: Request):
             if request.method == "GET":
-                return response.text("this is just an endpoint for the alertmanager")
+                return Response("this is just an endpoint for the alertmanager")
             room.send_html(format_alert(request.body, html=True))
-            return response.json({"status": "ok"})
+            return JSONResponse({"status": "ok"})
 
         return link
 
@@ -56,56 +58,51 @@ class RocketBot:
     def get_link(self, channel):
         async def link(request: Request):
             if request.method == "GET":
-                return response.text("this is just an endpoint for the alertmanager")
+                return Response("this is just an endpoint for the alertmanager")
             self.bot.send_message(format_alert(request.body), channel)
-            return response.json({"status": "ok"})
+            return JSONResponse({"status": "ok"})
 
         return link
 
 
-class Knopfler:
-    def __init__(self, config):
-        self.app = Sanic(name="knopfler")
-        self.bots = {}
-        for bot in config.get("bots"):
-            if bot["type"] == "rocket":
-                self.bots[bot["name"]] = RocketBot(bot)
-            if bot["type"] == "matrix":
-                self.bots[bot["name"]] = MatrixBot(bot)
+config = json.load(open("knopfler.json"))
 
-        for link in config.get("links"):
-            newroute = self.bots[link["bot"]].get_link(link["channel"])
-            self.app.add_route(newroute, link["url"], methods=("GET", "POST"))
+app = Starlette(debug=True)
 
-        async def home(request):
-            return response.text("♫ knopfler is up and running")
 
-        self.app.add_route(home, "/")
+bots = {}
+for bot in config.get("bots",[]):
+    if bot["type"] == "rocket":
+        bots[bot["name"]] = RocketBot(bot)
+    if bot["type"] == "matrix":
+        bots[bot["name"]] = MatrixBot(bot)
+for link in config.get("links",[]):
+    newroute = bots[link["bot"]].get_link(link["channel"])
+    if not link["url"].startswith("/"):
+        link["url"] = f"/{link['url']}"
+    app.add_route(link["url"], newroute, methods=["GET", "POST"])
 
-        if config.get("healthcheck"):
 
-            async def healthcheck_task():
-                while True:
-                    urlopen(config["healthcheck"])
-                    await asyncio.sleep(60 * 5)
+async def home(request: Request):
+    return Response("♫ knopfler is up and running")
 
-            self.app.add_task(healthcheck_task)
+
+app.add_route("/", home)
+
+if config.get("healthcheck"):
+
+    async def send_heartbeat():
+        while True:
+            urlopen(config["healthcheck"])
+            await asyncio.sleep(60 * 5)
+
+    @app.on_event("startup")
+    async def startup():
+        asyncio.create_task(send_heartbeat())
 
 
 def main():
-    config = json.load(open("knopfler.json"))
-    knopfler = Knopfler(config)
     if config.get("unix-socket"):
-        import os
-        import socket
-
-        with socket.socket(socket.AF_UNIX) as sock:
-            sock.bind("knopfler.socket")
-            knopfler.app.run(sock=sock)
-        os.remove("knopfler.socket")
+        uvicorn.run("knopfler:app", uds="knopfler.socket")
     else:
-        knopfler.app.run(host="0.0.0.0", port=9282)
-
-
-if __name__ == "__main__":
-    main()
+        uvicorn.run("knopfler:app", host="0.0.0.0", port=9282)

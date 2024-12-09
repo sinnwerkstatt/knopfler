@@ -5,13 +5,12 @@ description = ""
 authors = ["Andreas Nüßlein <andreas@nuessle.in>"]
 
 [tool.poetry.dependencies]
-python = "^3.8"
-sanic = "*"
+python = ">=3.9"
+fastapi = "*"
 
 RocketChatAPIBot = { version = ">=0.1.4", optional = true }
 matrix_client = { version = ">=0.4", optional = true }
-
-[tool.poetry.dev-dependencies]
+uvicorn = "^0.32.1"
 
 [tool.poetry.extras]
 matrix = ["matrix_client"]
@@ -20,6 +19,9 @@ rocketchat = ["RocketChatAPIBot"]
 [tool.poetry.scripts]
 knopfler = 'knopfler:main'
 
+
+[tool.poetry.group.dev.dependencies]
+black = "^24.10.0"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
