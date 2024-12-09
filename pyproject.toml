@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "knopfler"
-version = "0.1.9"
+version = "0.2.1"
 description = ""
 authors = ["Andreas Nüßlein <andreas@nuessle.in>"]
 

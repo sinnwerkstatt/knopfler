@@ -8,9 +8,9 @@ from starlette.requests import Request
 from starlette.responses import JSONResponse, Response
 
 
-def format_alert(msg, html=False):
+def format_alert(msg:dict, html=False):
     try:
-        alerts = json.loads(msg)["alerts"]
+        alerts = msg["alerts"]
     except:
         return f"Error trying to parse JSON!!!\n\n{msg}"
     ret = []
@@ -41,7 +41,7 @@ class MatrixBot:
         async def link(request: Request):
             if request.method == "GET":
                 return Response("this is just an endpoint for the alertmanager")
-            room.send_html(format_alert(request.body, html=True))
+            room.send_html(format_alert(await request.json(), html=True))
             return JSONResponse({"status": "ok"})
 
         return link
