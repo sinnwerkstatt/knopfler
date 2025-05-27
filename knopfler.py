@@ -8,17 +8,18 @@ from starlette.requests import Request
 from starlette.responses import JSONResponse, Response
 
 
-def format_alert(msg:dict, html=False):
+def format_alert(msg: dict, html=False):
     try:
         alerts = msg["alerts"]
-    except:
+    except KeyError:
         return f"Error trying to parse JSON!!!\n\n{msg}"
     ret = []
     for alert in alerts:
         labels = alert["labels"]
         status = "🔥" if alert["status"] == "firing" else "✅"
         ret += [
-            f"[{status} {alert['status']}] {labels['instance']}: {labels['alertname']} {labels.get('name','')}"
+            f"[{status} {alert['status']}]",
+            f"{labels['instance']}: {labels['alertname']} {labels.get('name', '')}",
         ]
     if html:
         return "<br>".join(ret)
@@ -71,12 +72,12 @@ app = Starlette(debug=True)
 
 
 bots = {}
-for bot in config.get("bots",[]):
+for bot in config.get("bots", []):
     if bot["type"] == "rocket":
         bots[bot["name"]] = RocketBot(bot)
     if bot["type"] == "matrix":
         bots[bot["name"]] = MatrixBot(bot)
-for link in config.get("links",[]):
+for link in config.get("links", []):
     newroute = bots[link["bot"]].get_link(link["channel"])
     if not link["url"].startswith("/"):
         link["url"] = f"/{link['url']}"
@@ -89,20 +90,24 @@ async def home(request: Request):
 
 app.add_route("/", home)
 
+heartbeat_tasks = set()
+
 if config.get("healthcheck"):
 
     async def send_heartbeat():
         while True:
-            urlopen(config["healthcheck"])
+            urlopen(config["healthcheck"])  # noqa: S310
             await asyncio.sleep(60 * 5)
 
     @app.on_event("startup")
     async def startup():
-        asyncio.create_task(send_heartbeat())
+        task = asyncio.create_task(send_heartbeat())
+        heartbeat_tasks.add(task)
+        task.add_done_callback(heartbeat_tasks.discard)
 
 
 def main():
     if config.get("unix-socket"):
         uvicorn.run("knopfler:app", uds="knopfler.socket")
     else:
-        uvicorn.run("knopfler:app", host="0.0.0.0", port=9282)
+        uvicorn.run("knopfler:app", host="0.0.0.0", port=9282)  # noqa: S104
