@@ -22,3 +22,6 @@ knopfler = 'knopfler:main'
 dev = [
     "ruff>=0.11.11",
 ]
+
+[tool.uv]
+package = true
