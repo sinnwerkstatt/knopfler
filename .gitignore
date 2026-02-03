@@ -3,3 +3,4 @@ knopfler.json
 /dist/
 __pycache__/
 *.egg-info/
+/.venv/
