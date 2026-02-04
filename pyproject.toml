@@ -1,15 +1,16 @@
 [project]
 name = "knopfler"
-version = "0.2.3"
+version = "0.2.4"
 description = ""
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 dependencies = [
     "fastapi>=0.115.12",
+    "pydantic>=2.12.5",
     "uvicorn>=0.34.2",
 ]
 [project.optional-dependencies]
 matrix = [
-    "matrix-client>=0.4.0",
+    "matrix-nio>=0.25.2",
 ]
 rocketchat = [
     "rocketchatapibot>=0.1.4",
