@@ -1,5 +1,6 @@
 import asyncio
 import json
+from contextlib import asynccontextmanager
 from typing import ClassVar, Literal
 from urllib.request import urlopen
 
@@ -151,23 +152,29 @@ for link in config.links:
 async def home(_request: Request):
     return Response("♫ knopfler is up and running")
 
-
 app.add_route("/", home)
 
 heartbeat_tasks = set()
 
-if config.healthcheck:
 
-    async def send_heartbeat():
-        while True:
-            urlopen(config.healthcheck)  # noqa: S310
-            await asyncio.sleep(60 * 5)
+@asynccontextmanager
+async def lifespan(app):
+    if config.healthcheck:
+        healthcheck_url: str = config.healthcheck
 
-    @app.on_event("startup")
-    async def startup():
+        async def send_heartbeat():
+            while True:
+                urlopen(healthcheck_url)  # noqa: S310
+                await asyncio.sleep(60 * 5)
+
         task = asyncio.create_task(send_heartbeat())
         heartbeat_tasks.add(task)
         task.add_done_callback(heartbeat_tasks.discard)
+
+    yield
+
+
+app.router.lifespan_context = lifespan
 
 
 def main():
